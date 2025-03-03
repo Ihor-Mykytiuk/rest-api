@@ -1,6 +1,7 @@
 from marshmallow import Schema, fields, validates, ValidationError, post_load
 from app.models import Book
 
+
 class BookSchema(Schema):
     title = fields.Str(required=True)
     author = fields.Str(required=True)
