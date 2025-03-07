@@ -7,17 +7,21 @@ from app.schemas import BookSchema
 book_api = Blueprint('book_api', __name__, url_prefix='/api/v1')
 
 
-@book_api.route('/books', methods=['GET'])
+def find_book_by_id(book_id):
+    book = next((book for book in books if book.id == book_id), None)
+    return book
+
+
+@book_api.get('/books')
 def get_books():
     return jsonify(books), 200
 
 
-@book_api.route('/books/<string:book_id>', methods=['GET'])
+@book_api.get('/books/<string:book_id>')
 def get_book(book_id):
-    book = next((book for book in books if book.id == book_id), None)
-    if book is None:
+    book = find_book_by_id(book_id)
+    if not book:
         return jsonify({'message': 'Book not found'}), 404
-
     return jsonify(book), 200
 
 
@@ -34,8 +38,8 @@ def add_book():
 
 @book_api.delete('/books/<string:book_id>')
 def delete_book(book_id):
-    book = next((book for book in books if book.id == book_id), None)
-    if book is None:
+    book = find_book_by_id(book_id)
+    if not book:
         return jsonify({'message': 'Book not found'}), 404
     books.remove(book)
-    return jsonify({'message': 'Book deleted'}), 204
+    return '', 204
